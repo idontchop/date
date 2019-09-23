@@ -5,5 +5,12 @@
 		<class>entities.User</class>
 		<class>entities.Favorites</class>
 		<class>entities.Blocks</class>
+		<class>entities.UserProfile</class>
+		<class>entities.userSecurity</class>
+		<class>entities.Trait</class>
+		<class>entities.Request</class>
+		<class>entities.RequestType</class>
+		<class>entities.TraitType</class>
+		<class>entities.TraitCategory</class>
 	</persistence-unit>
 </persistence>

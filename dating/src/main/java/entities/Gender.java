@@ -34,6 +34,7 @@ public class Gender  {
 
 	/**
 	 * Factory for classes that need this, since gender is NotNull
+	 * Is this the best way?
 	 * @return
 	 */
 	public static Gender getDefault () {

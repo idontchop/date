@@ -6,5 +6,5 @@ import entities.Favorites;
 import entities.FavoritesId;
 
 public interface FavoritesRepository extends CrudRepository <Favorites, FavoritesId> { 
- 
+   
 }
