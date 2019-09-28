@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
@@ -35,6 +36,8 @@ public class User {
 	private long id;
 	
 	@NotNull
+	@ManyToOne ( fetch = FetchType.EAGER )
+	@JoinColumn ( name = "gender_id")
 	private Gender gender;
 	
 	/**
@@ -42,6 +45,8 @@ public class User {
 	 * We aren't a gay site right?
 	 */
 	@NotNull
+	@ManyToOne ( fetch = FetchType.EAGER )
+	@JoinColumn ( name = "interested_id")
 	private Gender interestedIn;
 	
 	/**

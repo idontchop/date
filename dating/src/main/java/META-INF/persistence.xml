@@ -12,5 +12,6 @@
 		<class>entities.RequestType</class>
 		<class>entities.TraitType</class>
 		<class>entities.TraitCategory</class>
+		<class>entities.Media</class>
 	</persistence-unit>
 </persistence>

@@ -19,11 +19,12 @@ import repositories.UserRepository;
 import repositories.FavoritesRepository;
 
 
-@SpringBootApplication
+@SpringBootApplication (scanBasePackages = { "com.idontchop"} )
 @RestController
 @EnableAutoConfiguration
 @EntityScan("entities")
 @EnableJpaRepositories("repositories")
+@ComponentScan (basePackages = { "adminMVC" } )
 public class DatingApplication {
 
 
@@ -36,9 +37,16 @@ public class DatingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DatingApplication.class, args);
 	}
-
+	
 	@RequestMapping ("/")
-	public Iterable<Favorites> helloWorld () {
+	public String helloWorld () {
+		return "Hello from future Dating App";
+	}
+		
+	
+	
+	@RequestMapping ("/allFavorites")
+	public Iterable<Favorites> allFavorites () {
 
 		return fRepository.findAll(); 
 	}
