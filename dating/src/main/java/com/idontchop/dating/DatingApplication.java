@@ -18,7 +18,10 @@ import entities.User;
 import repositories.UserRepository;
 import repositories.FavoritesRepository;
 
-
+/**
+ * This is going to be a big project but keep reading and we will get there.
+ * @author micro
+ */
 @SpringBootApplication (scanBasePackages = { "com.idontchop"} )
 @RestController
 @EnableAutoConfiguration
