@@ -46,7 +46,7 @@ public class User {
 	 */
 	@NotNull
 	@ManyToOne ( fetch = FetchType.EAGER )
-	@JoinColumn ( name = "interested_id")
+	@JoinColumn ( name = "interested_in_id")
 	private Gender interestedIn;
 	
 	/**
@@ -60,7 +60,7 @@ public class User {
 	private UserProfile profile;
 	
 	// TODO: Foreign keys
-	long search_preference_Id;
+	//long search_preference_Id;
 	
 	// date user created
 	private Date created;
@@ -81,14 +81,6 @@ public class User {
 
 	public void setId(long id) {
 		this.id = id;
-	}
-
-	public long getSearch_preference_Id() {
-		return search_preference_Id;
-	}
-
-	public void setSearch_preference_Id(long search_preference_Id) {
-		this.search_preference_Id = search_preference_Id;
 	}
 
 	public Date getCreated() {
