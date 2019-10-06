@@ -22,9 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.io.ParseException;
+
 import entities.Favorites;
 import entities.Gender;
 import entities.User;
+import entities.UserLocation;
 import entities.UserProfile;
 import entities.UserSecurity;
 import repositories.UserRepository;
@@ -123,8 +127,8 @@ public class DatingApplication {
 			u.setInterestedIn(defaultGender);
 			
 			userRepository.save(u);
-			}
-			*/
+			}*/
+			
 			// end add user CL
 			 
 			User u = userRepository.findById(60L).orElse(new User());
@@ -146,11 +150,20 @@ public class DatingApplication {
 	@RequestMapping ("mainSearch")
 	public Page<User> mainSearch ( 
 			@RequestParam (defaultValue = "10") Integer perPage, // Number of profiles per page
-			@RequestParam (defaultValue = "0") Integer page			// Current page number
+			@RequestParam (defaultValue = "0") Integer page,			// Current page number
+			@RequestParam (defaultValue = "0") Double lat,		//user supplied latitude
+			@RequestParam (defaultValue = "0") Double lng		// longitude
 			) {
 		
 		Pageable p = PageRequest.of ( page, perPage );
-		return userRepository.findByGender_ActiveTrue(p);
+		Point userLoc;
+		try {
+			userLoc = UserLocation.pointFromCoords(lng, lat);
+		} catch (ParseException e) {
+			// Some how bad location data
+			return null;
+		}
+		return userRepository.findAllLocation(userLoc, 80000, p);
 	}
 		
 	
