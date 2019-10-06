@@ -13,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table ( name = "user_security" )
-public class userSecurity implements Serializable {
+public class UserSecurity implements Serializable {
 
 	   
 	@Id
@@ -23,12 +23,12 @@ public class userSecurity implements Serializable {
 	@Length ( min = 4, max = 16)
 	private String username;
 	
-	@Length ( min = 8, max = 32 )
+	@Length ( min = 4, max = 32 )
 	private String password;
 	
 	private static final long serialVersionUID = 1L;
 
-	public userSecurity() {
+	public UserSecurity() {
 		super();
 	}   
 	
@@ -39,5 +39,23 @@ public class userSecurity implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
    
 }

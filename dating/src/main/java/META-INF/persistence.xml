@@ -6,12 +6,13 @@
 		<class>entities.Favorites</class>
 		<class>entities.Blocks</class>
 		<class>entities.UserProfile</class>
-		<class>entities.userSecurity</class>
+		<class>entities.UserSecurity</class>
 		<class>entities.Trait</class>
 		<class>entities.Request</class>
 		<class>entities.RequestType</class>
 		<class>entities.TraitType</class>
 		<class>entities.TraitCategory</class>
 		<class>entities.Media</class>
+		<class>entities.UserLocation</class>
 	</persistence-unit>
 </persistence>

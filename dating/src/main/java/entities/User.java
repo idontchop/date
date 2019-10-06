@@ -3,8 +3,9 @@
  */
 package entities;
 
-import java.sql.Date;
+import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,9 +56,17 @@ public class User {
 	 * Fetched eager mainly because of birthday. Will always need that.
 	 */
 	@NotNull
-	@OneToOne ( fetch = FetchType.EAGER )
+	@OneToOne ( fetch = FetchType.EAGER, cascade = CascadeType.ALL )
 	@JoinColumn ( name = "profile_id" )
 	private UserProfile profile;
+	
+	/**
+	 * User Security, this class never on endpoints
+	 */
+	@NotNull
+	@OneToOne ( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn ( name = "security_id" )
+	private UserSecurity userSecurity;
 	
 	// TODO: Foreign keys
 	//long search_preference_Id;
@@ -113,6 +122,22 @@ public class User {
 
 	public void setProfile(UserProfile profile) {
 		this.profile = profile;
+	}
+
+	public Gender getInterestedIn() {
+		return interestedIn;
+	}
+
+	public void setInterestedIn(Gender interestedIn) {
+		this.interestedIn = interestedIn;
+	}
+
+	public UserSecurity getUserSecurity() {
+		return userSecurity;
+	}
+
+	public void setUserSecurity(UserSecurity userSecurity) {
+		this.userSecurity = userSecurity;
 	}
 
 	@Override

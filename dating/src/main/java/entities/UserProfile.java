@@ -1,7 +1,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -56,5 +56,47 @@ public class UserProfile implements Serializable {
 	public UserProfile() {
 		super();
 	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getAboutMe() {
+		return aboutMe;
+	}
+
+	public void setAboutMe(String aboutMe) {
+		this.aboutMe = aboutMe;
+	}
+
+	public String getLookingFor() {
+		return lookingFor;
+	}
+
+	public void setLookingFor(String lookingFor) {
+		this.lookingFor = lookingFor;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+	
+	
    
 }
