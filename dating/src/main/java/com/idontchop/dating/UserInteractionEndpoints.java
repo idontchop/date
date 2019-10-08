@@ -100,7 +100,44 @@ public class UserInteractionEndpoints {
 		return addInteraction ( IType.LIKE, target );
 	}
 	
-
+	/**
+	 * removes target favorite
+	 */
+	@RequestMapping ( value = "remFav", method = RequestMethod.DELETE )
+	public String remFav ( @RequestParam ( defaultValue = "-1L") Long target ) {
+		return remInteraction ( IType.FAV, target);
+	}
+	
+	/**
+	 * remove Like
+	 * @param target
+	 * @return
+	 */
+	@RequestMapping ( value = "remLike", method = RequestMethod.DELETE )
+	public String remLike ( @RequestParam ( defaultValue = "-1L") Long target ) {
+		return remInteraction ( IType.LIKE, target );
+	}
+	
+	/**
+	 * remove Block
+	 * @param target
+	 * @return
+	 */
+	@RequestMapping ( value = "remBlock", method = RequestMethod.DELETE )
+	public String remBlock ( @RequestParam ( defaultValue = "-1L") Long target ) {
+		return remInteraction ( IType.BLOCK, target );
+	}
+	
+	/**
+	 * Remove Hide
+	 * @param target
+	 * @return
+	 */
+	@RequestMapping ( value = "remHide", method = RequestMethod.DELETE )
+	public String remHide ( @RequestParam ( defaultValue = "-1L") Long target ) {
+		return remInteraction ( IType.HIDE, target );
+	}
+	
 	/**
 	 * Adds an Interaction handles return string for add endpoints
 	 * 
@@ -134,6 +171,32 @@ public class UserInteractionEndpoints {
 		}
 		
 		return "success";
+	}
+	
+	/**
+	 * API with InteractionsService to remove an Interaction
+	 * 
+	 * @param itype
+	 * @param target the target id (toId), fromId is current user
+	 * @return string "success" or an error message
+	 */
+	private String remInteraction ( IType itype, Long target ) {
+		
+		// see addInteraction
+		
+		if ( target == -1 ) return "no target";
+		
+		User from = getUser();
+		
+		if ( target == from.getId() ) return "target self";
+		
+		try {
+			iService.remove( from.getId(), target, itype);
+		} catch ( Exception e ) {
+			return e.getMessage();
+		}
+		return "success";
+		
 	}
 	
 	
