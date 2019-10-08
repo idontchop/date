@@ -3,8 +3,9 @@ package repositories;
 import org.springframework.data.repository.CrudRepository;
 
 import entities.Favorites;
-import entities.FavoritesId;
+import entities.InteractionsId;
 
-public interface FavoritesRepository extends CrudRepository <Favorites, FavoritesId> { 
+
+public interface FavoritesRepository extends CrudRepository <Favorites, InteractionsId> { 
    
 }

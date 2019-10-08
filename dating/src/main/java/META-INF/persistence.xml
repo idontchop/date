@@ -14,5 +14,8 @@
 		<class>entities.TraitCategory</class>
 		<class>entities.Media</class>
 		<class>entities.UserLocation</class>
+		<class>entities.Hides</class>
+		<class>entities.Likes</class>
+		<class>entities.Interactions</class>
 	</persistence-unit>
 </persistence>

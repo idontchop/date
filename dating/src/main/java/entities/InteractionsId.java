@@ -1,31 +1,37 @@
-/**
- * 
- */
 package entities;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
 
 /**
+ * 
  * @author Nathaniel J Dunn <idontchop.com>
+ * 
+ * ID class for Interactions Junction. see entities.Favorites.java
  *
  */
-public class BlocksId implements Serializable {
+
+public class InteractionsId implements Serializable{
+	
 
 	private static final long serialVersionUID = 1L;
 
-	@Column( name = "from_id" )
-	protected long fromId;
+	@Column ( name = "from_id" )
+	private long fromId;
 	
-	@Column( name = "to_id" )
-	protected long toId;
-	
-	public BlocksId () {
+	@Column ( name = "to_id" )
+	private long toId;
+
+	public InteractionsId () {
 		
 	}
 	
-	public BlocksId ( long fromId, long toId ) {
+	public InteractionsId ( long fromId, long toId ) {
 		this.fromId = fromId;
 		this.toId = toId;
 	}
@@ -47,7 +53,7 @@ public class BlocksId implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BlocksId other = (BlocksId) obj;
+		InteractionsId other = (InteractionsId) obj;
 		if (fromId != other.fromId)
 			return false;
 		if (toId != other.toId)
@@ -57,3 +63,4 @@ public class BlocksId implements Serializable {
 	
 	
 }
+

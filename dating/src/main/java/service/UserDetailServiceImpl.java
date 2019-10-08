@@ -23,7 +23,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		
 		User currentUser = userRepository.findByUserSecurity_Username ( username );
 		
-		System.out.println ( "Nate" == currentUser.getUserSecurity().getUsername() );
+
 
 		UserDetails user = new org.springframework.security.core.userdetails
 				.User ( currentUser.getUserSecurity().getUsername(),
