@@ -7,11 +7,14 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * super class for the User Interactions: likes, favorites, hides, blocks
@@ -60,12 +63,14 @@ public class Interactions implements Serializable {
 	@Column( name = "to_id", insertable = false, updatable = false )
 	private long toId;
 	
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.LAZY )
 	@JoinColumn(name="from_id",insertable = false, updatable = false )
+	@JsonIgnore
 	private User from;
 	
-	@ManyToOne
+	@ManyToOne ( fetch = FetchType.LAZY )
 	@JoinColumn(name="to_id",insertable = false, updatable = false )
+	@JsonIgnore
 	private User to;
 		
 	private boolean active = true;
@@ -126,6 +131,26 @@ public class Interactions implements Serializable {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+
+	public long getFromId() {
+		return fromId;
+	}
+
+
+	public void setFromId(long fromId) {
+		this.fromId = fromId;
+	}
+
+
+	public long getToId() {
+		return toId;
+	}
+
+
+	public void setToId(long toId) {
+		this.toId = toId;
 	}
 
 

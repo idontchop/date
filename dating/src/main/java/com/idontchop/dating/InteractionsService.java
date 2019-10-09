@@ -1,5 +1,7 @@
 package com.idontchop.dating;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import entities.Hides;
 import entities.Interactions;
 import entities.InteractionsId;
 import entities.Likes;
+import entities.User;
 import repositories.BlocksRepository;
 import repositories.FavoritesRepository;
 import repositories.HidesRepository;
@@ -39,6 +42,79 @@ public class InteractionsService {
 		
 	}
 
+	/**
+	 * Finds connections (when two users like each other)
+	 * 
+	 * @param userList
+	 * @return Favorites array
+	 */
+	public Iterable<Likes> findConnections ( long from, long[] userList ) {
+		
+		List <InteractionsId> userIds = new ArrayList<>();
+
+		for ( long to : userList ) {
+			userIds.add( new InteractionsId( to, from) );			
+		}
+		
+		// here we have who the likes the user
+		Iterable<Likes> fromToLikes = lRepository.findAllById(userIds);
+		
+		// flip them and find again and we have connections
+		userIds.clear();
+		fromToLikes.forEach( l -> {
+			userIds.add( new InteractionsId ( l.getTo().getId(), l.getFrom().getId() ) );
+		});
+		
+		// TODO: need logic here to only return two sided matches
+		return lRepository.findAllById(userIds);
+	}
+	
+	/**
+	 * Finds all interactions of specified IType.
+	 * @param itype
+	 * @param userList
+	 * @return
+	 */
+	public Iterable<? extends Interactions> findInteractions ( long from, long[] userList, IType itype ) {
+		
+		List <InteractionsId> userIds = new ArrayList<>();
+		
+		// create composite keys
+		for ( long to : userList ) {
+			userIds.add( new InteractionsId ( from, to ) );
+		}
+		
+		// TODO: gotta be a way to return the right repo from an enum
+		if ( itype == IType.FAV )
+			return fRepository.findAllById(userIds);
+		else if ( itype == IType.BLOCK )
+			return bRepository.findAllById(userIds);
+		else if ( itype == IType.HIDE )
+			return hRepository.findAllById(userIds);
+		else return lRepository.findAllById(userIds);
+	}
+	
+	/**
+	 * This gets the user's Interactions as a list.
+	 * 
+	 * Since this could possibly be a long list, may need a paging repo?
+	 * @param user the user
+	 * @param itype
+	 * @return
+	 */
+	public Iterable <? extends Interactions> getInteractions ( User user, IType itype ) {
+		
+		if ( itype == IType.FAV )
+			return fRepository.findAllByFrom(user);
+		else if ( itype == IType.BLOCK )
+			return bRepository.findAllByFrom(user);
+		else if ( itype == IType.HIDE )
+			return hRepository.findAllByFrom(user);
+		else if ( itype == IType.LIKE ) 
+			return lRepository.findAllByFrom(user);
+		else throw new IllegalArgumentException ( itype.getName() + " not implemented in InteractionsService.getInteractions");
+	}
+	
 	/**
 	 * Receives an interaction and writes it to the proper repository
 	 * @param iAction

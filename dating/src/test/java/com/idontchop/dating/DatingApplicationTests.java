@@ -4,7 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,11 +20,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
@@ -28,14 +38,17 @@ import entities.Hides;
 import entities.Interactions;
 import entities.InteractionsId;
 import entities.Likes;
+import entities.Media;
 import entities.User;
 import entities.UserLocation;
 import repositories.BlocksRepository;
 import repositories.FavoritesRepository;
 import repositories.HidesRepository;
 import repositories.LikesRepository;
+import repositories.MediaRepository;
 import repositories.UserLocationRepository;
 import repositories.UserRepository;
+import service.MediaService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -60,9 +73,91 @@ public class DatingApplicationTests {
 	}
 	
 	@Autowired
+	private MediaRepository mRepository;
+	
+	@Autowired
+	private MediaService mService;
+	
+	long userList[] = { 51L, 54L, 57L, 63L, 66L, 69L, 72L, 75L, 78L, 81L, 84L, 85L, 86L, 87L, 88L };
+	
+	@Autowired
 	private InteractionsService iRepository;
 	
+	@Autowired
+	private InteractionsService iService;
+	
+	@Autowired
+	private TestRestTemplate testRestTemplate;
+	
 	@Test
+	public void getByFromTest () {
+		User user = userRepository.findById(42L).get();
+		List<Favorites> f = new ArrayList<>();
+		fRepository.findAllByFrom(user).forEach( e -> f.add(e));
+		assertTrue ( f.size() == 3);
+		ObjectMapper om = new ObjectMapper();
+		String s =  "";
+		try {
+			s = om.writeValueAsString(f.get(0));
+		} catch (JsonProcessingException e1) {
+			
+			e1.printStackTrace();
+		}
+		System.out.println(s);
+		
+	}
+	
+	public void getInteractionsTest () {
+		
+		iService.findInteractions(42L, userList, IType.LIKE).forEach( e -> {
+			System.out.print ( e.getClass().toString() );
+			System.out.println ( ":" + e.getFrom().getId() + "_" + e.getTo().getId() );
+		});
+	}
+	
+	
+	public void MediaTest () throws IOException {
+		
+		Iterable<Media> m = mRepository.findAll();
+		
+		m.forEach( e -> {
+			System.out.println( e.getId() );
+			if (e.getId() == 158 ) {
+				System.out.println( e.getMediaData().getId());
+			}
+		});
+	}
+	
+	public void MediaAddTest () throws IOException {
+		
+		try {
+		Media m = new Media();
+		File file = new File ("/home/nate/Pictures/satori.jpg");
+		
+		BufferedImage o = ImageIO.read(file);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(o, "jpg", baos);
+		baos.flush();
+		
+		byte[] iByte = baos.toByteArray();
+		baos.close();
+		
+		User user = userRepository.findById(42L).get();
+		
+		m.setData(iByte);
+		m.setUser(user);
+		
+		System.out.println("Storing " + m.getId());
+		mRepository.save(m);
+		} catch ( Exception e ) {
+			System.out.println (e.getMessage());
+		}
+	}
+	
+
+	
+	
 	public void InteractionServiceTest () {
 		
 		User from = ur (72L);
@@ -89,7 +184,7 @@ public class DatingApplicationTests {
 		});
 	}
 	
-	@Test
+	
 	public void ITypeTest () {
 
 		User from = ur (72L);
@@ -127,7 +222,7 @@ public class DatingApplicationTests {
 	
 	@Autowired LikesRepository lRepository;
 	
-	@Test
+	
 	public void LikesTest () {
 		User from = ur(42L);
 		User to = ur (57L);
@@ -139,7 +234,7 @@ public class DatingApplicationTests {
 	
 	@Autowired HidesRepository hRepository;
 	
-	@Test
+	
 	public void HidesTest () {
 		User from = ur (42L);
 		User to = ur (57L);
@@ -150,7 +245,7 @@ public class DatingApplicationTests {
 	
 	@Autowired BlocksRepository bRepository;
 	
-	@Test
+	
 	public void BlocksTest () {
 		User from = ur (42L);
 		User to = ur (57L);

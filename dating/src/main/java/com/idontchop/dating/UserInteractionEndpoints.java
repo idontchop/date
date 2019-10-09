@@ -1,6 +1,8 @@
 package com.idontchop.dating;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.trace.http.HttpTrace.Principal;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,12 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 import entities.Blocks;
 import entities.Favorites;
 import entities.Interactions;
+import entities.Likes;
 import entities.User;
 import repositories.BlocksRepository;
 import repositories.FavoritesRepository;
 import repositories.HidesRepository;
 import repositories.LikesRepository;
 import repositories.UserRepository;
+import rest_entities.InteractionsList;
 
 
 /**
@@ -43,11 +47,46 @@ public class UserInteractionEndpoints {
 	@Autowired
 	private UserRepository userRepository;
 
+	// held to avoid unnecessary DB requests
+	private User currentUser;
+	
 	/**
 	 * Takes care of finding and saving interactions when type not explicit.
 	 */
 	@Autowired
 	private InteractionsService iService;
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping ( value = "/interactionsList", method = RequestMethod.GET )
+	public InteractionsList getInteractionsList ( @RequestParam long[] userList ) {
+		InteractionsList interactionsList = new InteractionsList();
+
+		interactionsList.setConnections(
+				iService.findConnections( getUser().getId(), userList)
+				);
+		
+		interactionsList.setFavorites(
+				(Iterable<Favorites>) iService.findInteractions(getUser().getId(), userList, IType.FAV)
+				);
+		
+		interactionsList.setLikes(
+				(Iterable<Likes>) iService.findInteractions(getUser().getId(), userList, IType.LIKE)
+				);
+		
+		return interactionsList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping ( value = "/myFavorites", method = RequestMethod.GET )
+	public Iterable<Favorites> getMyFavorites ( ) {		
+		return (Iterable<Favorites>) iService.getInteractions(getUser(), IType.FAV);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping ( value = "/myLikes", method = RequestMethod.GET )
+	public Iterable<Likes> getLikes ( ) {		
+		return (Iterable<Likes>) iService.getInteractions(getUser(), IType.LIKE);
+	}
 	
 	/**
 	 * This adds a favorite for the current user. Favorites are a oneway
@@ -204,9 +243,13 @@ public class UserInteractionEndpoints {
 	 * Helper function, returns the User entity of the currently logged in user
 	 */
 	private User getUser () {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		User u = userRepository.findByUserSecurity_Username(currentPrincipalName);
-		return u;
+		if ( currentUser == null ) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String currentPrincipalName = authentication.getName();
+			currentUser = userRepository.findByUserSecurity_Username(currentPrincipalName);
+		}
+		return currentUser;
 	}
+	
+	
 }

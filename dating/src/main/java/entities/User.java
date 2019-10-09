@@ -4,18 +4,24 @@
 package entities;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+
 
 /**
  * @author Nathaniel J Dunn <idontchop.com>
@@ -33,7 +39,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 public class User {
 	
 	@Id
-	@GeneratedValue
+	@GeneratedValue ( strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	@NotNull
@@ -67,6 +73,11 @@ public class User {
 	@OneToOne ( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn ( name = "security_id" )
 	private UserSecurity userSecurity;
+	
+	@OneToMany ( mappedBy="user", fetch = FetchType.EAGER )
+	@OrderBy ( value = "priority" )
+	private List<Media> media;
+
 	
 	// TODO: Foreign keys
 	//long search_preference_Id;
@@ -138,6 +149,14 @@ public class User {
 
 	public void setUserSecurity(UserSecurity userSecurity) {
 		this.userSecurity = userSecurity;
+	}
+
+	public List<Media> getMedia() {
+		return media;
+	}
+
+	public void setMedia(List<Media> media) {
+		this.media = media;
 	}
 
 	@Override

@@ -67,34 +67,34 @@ public class DatingApplication {
 		return args -> {
 			
 			
-			/* User and Profile
+			/* User and Profile 
 			  
 			String[][]  strings = new String[][] {
 				{
-					"I'm a man2", // profile.aboutme
+					"profile for Carter", // profile.aboutme
 					"I'm looking lady2", //profile.lookingfor
-					"Boomer2", //profile.displayname
-					"boomer12", //security.username
+					"Carter", //profile.displayname
+					"carter", //security.username
 					"1234", // security.password
 				},
 				{
-					"Another man2",
+					"Melani the bloodsucker",
 					"Looking lady that is beautiful2",
-					"Sooner2",
-					"sooner12",
+					"Melani",
+					"melani",
 					"1234"
 				},
 				{
-					"Tranny man2",
+					"Helen the crazy cutie",
 					"Looking tall dark and handsome2",
-					"tranny2",
-					"tranny12",
+					"Helen",
+					"helen",
 					"1234"
 				},
 				{
 					"Beautiful lady2",
 					"I want a rich man2",
-					"lady2",
+					"Lumi",
 					"lady12",
 					"1234"
 				}
@@ -163,7 +163,9 @@ public class DatingApplication {
 			// Some how bad location data
 			return null;
 		}
-		return userRepository.findAllLocation(userLoc, 80000, p);
+		int searchDistance = 80000;
+		if ( lat == 0 && lng == 0) searchDistance = 100000000;
+		return userRepository.findAllLocation(userLoc, searchDistance, p);
 	}
 		
 	

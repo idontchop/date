@@ -94,7 +94,8 @@ public enum IType {
 		return name;
 	}
 		
-
+	// TODO: figure this out
+	//public abstract CrudRepository<?, ?> getRepo() ;
 	/**
 	 * returns a new Interaction
 	 * @return type of interaction empty

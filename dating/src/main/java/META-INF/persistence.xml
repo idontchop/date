@@ -17,5 +17,6 @@
 		<class>entities.Hides</class>
 		<class>entities.Likes</class>
 		<class>entities.Interactions</class>
+		<class>entities.MediaData</class>
 	</persistence-unit>
 </persistence>
