@@ -29,6 +29,7 @@ import repositories.HidesRepository;
 import repositories.LikesRepository;
 import repositories.UserRepository;
 import rest_entities.InteractionsList;
+import rest_entities.RestMessage;
 
 
 /**
@@ -56,6 +57,16 @@ public class UserInteractionEndpoints {
 	@Autowired
 	private InteractionsService iService;
 	
+	/**
+	 * This endpoint returns arrays for connections, favorites, and likes. It is used
+	 * by the client after a search has been made to update the UI.
+	 * 
+	 * These interactions are not included in the main search for performance reasons.
+	 *  
+	 * @param userList The client only requests an interaction list on users it doesn't
+	 * already know
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping ( value = "/interactionsList", method = RequestMethod.GET )
 	public InteractionsList getInteractionsList ( @RequestParam long[] userList ) {
@@ -98,8 +109,8 @@ public class UserInteractionEndpoints {
 	 * @param principal the current user's security information
 	 * @return
 	 */
-	@RequestMapping ( value = "/addFavorite", method = RequestMethod.POST)
-	public String addFavorite ( @RequestParam (defaultValue = "-1L") Long target
+	@RequestMapping ( value = "/addFav", method = RequestMethod.POST)
+	public RestMessage addFavorite ( @RequestParam (defaultValue = "-1L") Long target
 								 ) {
 		return addInteraction ( IType.FAV, target );		
 	}
@@ -111,7 +122,7 @@ public class UserInteractionEndpoints {
 	 * @return see addInteraction
 	 */
 	@RequestMapping ( value = "/addBlock", method = RequestMethod.POST )
-	public String addBlock ( @RequestParam (defaultValue = "-1L") Long target ) {
+	public RestMessage addBlock ( @RequestParam (defaultValue = "-1L") Long target ) {
 		return addInteraction ( IType.BLOCK, target );
 	}
 	
@@ -123,7 +134,7 @@ public class UserInteractionEndpoints {
 	 * @return see addInteraction
 	 */
 	@RequestMapping ( value = "/addHide", method = RequestMethod.POST )
-	public String addHide ( @RequestParam (defaultValue = "-1L") Long target ) {
+	public RestMessage addHide ( @RequestParam (defaultValue = "-1L") Long target ) {
 		return addInteraction ( IType.HIDE, target );
 	}
 	
@@ -135,15 +146,15 @@ public class UserInteractionEndpoints {
 	 * @return see addInteraction
 	 */
 	@RequestMapping ( value = "addLike", method = RequestMethod.POST )
-	public String addLike ( @RequestParam ( defaultValue = "-1L") Long target ) {
+	public RestMessage addLike ( @RequestParam ( defaultValue = "-1L") Long target ) {
 		return addInteraction ( IType.LIKE, target );
 	}
 	
 	/**
 	 * removes target favorite
 	 */
-	@RequestMapping ( value = "remFav", method = RequestMethod.DELETE )
-	public String remFav ( @RequestParam ( defaultValue = "-1L") Long target ) {
+	@RequestMapping ( value = "addFav", method = RequestMethod.DELETE )
+	public RestMessage remFav ( @RequestParam ( defaultValue = "-1L") Long target ) {
 		return remInteraction ( IType.FAV, target);
 	}
 	
@@ -152,8 +163,8 @@ public class UserInteractionEndpoints {
 	 * @param target
 	 * @return
 	 */
-	@RequestMapping ( value = "remLike", method = RequestMethod.DELETE )
-	public String remLike ( @RequestParam ( defaultValue = "-1L") Long target ) {
+	@RequestMapping ( value = "addLike", method = RequestMethod.DELETE )
+	public RestMessage remLike ( @RequestParam ( defaultValue = "-1L") Long target ) {
 		return remInteraction ( IType.LIKE, target );
 	}
 	
@@ -162,8 +173,8 @@ public class UserInteractionEndpoints {
 	 * @param target
 	 * @return
 	 */
-	@RequestMapping ( value = "remBlock", method = RequestMethod.DELETE )
-	public String remBlock ( @RequestParam ( defaultValue = "-1L") Long target ) {
+	@RequestMapping ( value = "addBlock", method = RequestMethod.DELETE )
+	public RestMessage remBlock ( @RequestParam ( defaultValue = "-1L") Long target ) {
 		return remInteraction ( IType.BLOCK, target );
 	}
 	
@@ -172,8 +183,8 @@ public class UserInteractionEndpoints {
 	 * @param target
 	 * @return
 	 */
-	@RequestMapping ( value = "remHide", method = RequestMethod.DELETE )
-	public String remHide ( @RequestParam ( defaultValue = "-1L") Long target ) {
+	@RequestMapping ( value = "addHide", method = RequestMethod.DELETE )
+	public RestMessage remHide ( @RequestParam ( defaultValue = "-1L") Long target ) {
 		return remInteraction ( IType.HIDE, target );
 	}
 	
@@ -184,15 +195,15 @@ public class UserInteractionEndpoints {
 	 * @param target the user target
 	 * @return String: "success" when added. Other strings indicate errors
 	 */
-	private String addInteraction ( IType itype, Long target ) {
+	private RestMessage addInteraction ( IType itype, Long target ) {
 		
 		// not very resty
-		if ( target == -1 ) return "no target";
+		if ( target == -1 ) return new RestMessage("no target");
 		
 		User from = getUser();
 		
 		// strange case but should check
-		if ( target == from.getId() ) return "target self";
+		if ( target == from.getId() ) return new RestMessage("target self");
 		
 		try {
 			
@@ -204,12 +215,12 @@ public class UserInteractionEndpoints {
 			iService.write(newInteraction);
 			
 		} catch ( java.util.NoSuchElementException e ) {
-			return e.getMessage();
+			return new RestMessage(e.getMessage());
 		} catch ( Exception e ) {
-			return e.getMessage();
+			return new RestMessage(e.getMessage());
 		}
 		
-		return "success";
+		return new RestMessage("added");
 	}
 	
 	/**
@@ -219,22 +230,22 @@ public class UserInteractionEndpoints {
 	 * @param target the target id (toId), fromId is current user
 	 * @return string "success" or an error message
 	 */
-	private String remInteraction ( IType itype, Long target ) {
+	private RestMessage remInteraction ( IType itype, Long target ) {
 		
 		// see addInteraction
 		
-		if ( target == -1 ) return "no target";
+		if ( target == -1 ) return new RestMessage("No Target");
 		
 		User from = getUser();
 		
-		if ( target == from.getId() ) return "target self";
+		if ( target == from.getId() ) return new RestMessage ("Target Self");
 		
 		try {
 			iService.remove( from.getId(), target, itype);
 		} catch ( Exception e ) {
-			return e.getMessage();
+			return new RestMessage (e.getMessage());
 		}
-		return "success";
+		return new RestMessage ("removed");
 		
 	}
 	

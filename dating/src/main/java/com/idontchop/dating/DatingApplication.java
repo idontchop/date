@@ -1,6 +1,7 @@
 package com.idontchop.dating;
 
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
@@ -145,6 +146,11 @@ public class DatingApplication {
 	@RequestMapping ("/testApi")
 	public Iterable<User> testApi() {
 		return userRepository.findAll();
+	}
+	
+	@RequestMapping ( "/User" )
+	public Principal showUser (Principal principal) {
+		return principal;
 	}
 	
 	@RequestMapping ("mainSearch")
