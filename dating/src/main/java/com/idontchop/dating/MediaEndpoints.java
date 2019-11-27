@@ -24,6 +24,12 @@ import repositories.MediaRepository;
 import repositories.UserRepository;
 import service.MediaService;
 
+/**
+ * Handles REST endpoints for images, videos, etc
+ * 
+ * @author Nathaniel J Dunn <idontchop.com>
+ *
+ */
 @RestController
 public class MediaEndpoints {
 	

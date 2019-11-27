@@ -48,7 +48,7 @@ public class UserInteractionEndpoints {
 	@Autowired
 	private UserRepository userRepository;
 
-	// held to avoid unnecessary DB requests
+	// held to avoid unnecessary Principal requests
 	private User currentUser;
 	
 	/**
@@ -256,9 +256,8 @@ public class UserInteractionEndpoints {
 	 */
 	private User getUser () {
 		if ( currentUser == null ) {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String currentPrincipalName = authentication.getName();
-			currentUser = userRepository.findByUserSecurity_Username(currentPrincipalName);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();			
+			currentUser = ((CurrentUser) authentication.getPrincipal()).getUser();
 		}
 		return currentUser;
 	}

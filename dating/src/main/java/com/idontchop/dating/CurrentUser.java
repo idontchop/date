@@ -1,6 +1,7 @@
 package com.idontchop.dating;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -25,13 +26,22 @@ public class CurrentUser extends org.springframework.security.core.userdetails.U
 	 */
 	private User user;
 
+	/**
+	 * Unused as if 12/1/2019
+	 */
 	public CurrentUser(String username, String password, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities) {
 		
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-		// TODO Auto-generated constructor stub
-		
+
+	}
+
+	/**
+	 * Used by UserDetailServiceImpl
+	 */
+	public CurrentUser(String username, String password, List<GrantedAuthority> createAuthorityList) {
+		super (username, password, createAuthorityList);
 	}
 
 	public User getUser() {

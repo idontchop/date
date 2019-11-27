@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import com.idontchop.dating.CurrentUser;
+
 import entities.User;
 import repositories.UserRepository;
 
@@ -23,10 +25,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		
 		User currentUser = userRepository.findByUserSecurity_Username ( username );
 		
-		UserDetails user = new org.springframework.security.core.userdetails
-				.User ( currentUser.getUserSecurity().getUsername(),
+		CurrentUser user = new CurrentUser ( currentUser.getUserSecurity().getUsername(),
 						currentUser.getUserSecurity().getPassword(),
 				AuthorityUtils.createAuthorityList("USER"));
+		
+		user.setUser(currentUser);
+		
 		return user;
 		
 	}
