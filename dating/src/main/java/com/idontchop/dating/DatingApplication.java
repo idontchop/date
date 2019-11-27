@@ -153,6 +153,22 @@ public class DatingApplication {
 		return principal;
 	}
 	
+	/**
+	 * Rest endpoint: /mainSearch
+	 * 
+	 * This is the main search for the user. The frontend is envisioned as an instagram-style
+	 * endless scroll where listings are chosen based on search setting (location, gender, etc)
+	 * 
+	 * Parameters are supplied via Json.
+	 * 
+	 * @param perPage technically not a profiles per page as that is determined by front end.
+	 * 		This Int determines how many to retrieve at a time.
+	 * @param page
+	 * @param lat latitude of search area, may be determined by user location or a city
+	 * @param lng longitude
+	 * 
+	 * @return Json with matching users
+	 */
 	@RequestMapping ("mainSearch")
 	public Page<User> mainSearch ( 
 			@RequestParam (defaultValue = "10") Integer perPage, // Number of profiles per page
@@ -163,6 +179,7 @@ public class DatingApplication {
 		
 		Pageable p = PageRequest.of ( page, perPage );
 		Point userLoc;
+		
 		try {
 			userLoc = UserLocation.pointFromCoords(lng, lat);
 		} catch (ParseException e) {

@@ -252,6 +252,7 @@ public class UserInteractionEndpoints {
 	
 	/**
 	 * Helper function, returns the User entity of the currently logged in user
+	 * This should be encapsulated in a service. TODO
 	 */
 	private User getUser () {
 		if ( currentUser == null ) {

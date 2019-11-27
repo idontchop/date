@@ -23,8 +23,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
 		
 		User currentUser = userRepository.findByUserSecurity_Username ( username );
 		
-
-
 		UserDetails user = new org.springframework.security.core.userdetails
 				.User ( currentUser.getUserSecurity().getUsername(),
 						currentUser.getUserSecurity().getPassword(),
