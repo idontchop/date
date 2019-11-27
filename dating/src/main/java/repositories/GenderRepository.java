@@ -6,4 +6,5 @@ import entities.Gender;
 
 public interface GenderRepository extends CrudRepository <Gender, Long> {
 
+	public Gender findByName(String name);
 }

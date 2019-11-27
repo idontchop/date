@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 
@@ -43,7 +45,7 @@ import repositories.GenderRepository;
 @SpringBootApplication (scanBasePackages = { "com.idontchop"} )
 @RestController
 @EnableAutoConfiguration
-@EntityScan("entities")
+@EntityScan({"entities"})
 @EnableJpaRepositories("repositories")
 @ComponentScan (basePackages = { "com.idontchop" } )
 @CrossOrigin (origins = "http://localhost:3000/", allowedHeaders = "*")
@@ -58,6 +60,15 @@ public class DatingApplication {
 	
 	@Autowired
 	private GenderRepository genderRepository;
+	
+	/**
+	 * To handle Dto - Entity conversion
+	 * @return
+	 */
+	@Bean ( name = "modelMapper" )
+	public ModelMapper modelMapper () {
+		return new ModelMapper();
+	}
 	
 	public static void main(String[] args) {
 		SpringApplication.run(DatingApplication.class, args);
