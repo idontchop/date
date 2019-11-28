@@ -5,6 +5,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import entities.User;
+import entities.UserProfile;
+import entities.UserSecurity;
 
 /**
  * Works with the create account form.
@@ -49,14 +51,12 @@ public class CreateAccountDto {
 	}
 	
 	/**
-	 * Creates a new User ready to be saved to the Database.
+	 * This Dto will not allow this due to the complexity of setting up a User
 	 * 
 	 * @return
 	 */
-	public User toEntity ()  {
-		User newUser = new User();
-		
-		return newUser;
+	public void toEntity () throws IllegalArgumentException {
+		throw new IllegalArgumentException ("Not Allowed - must create conversion outside bean");
 	}
 
 	public String getEmail() {

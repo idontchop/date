@@ -1,8 +1,13 @@
 package com.idontchop.dating;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +22,9 @@ import dto.UserProfileDto;
 import entities.Gender;
 import entities.User;
 import entities.UserProfile;
+import entities.UserSecurity;
 import repositories.UserRepository;
+import repositories.UserSecurityRepository;
 import repositories.GenderRepository;
 import repositories.UserProfileRepository;
 import rest_entities.RestMessage;
@@ -38,6 +45,9 @@ public class UserEndpoints {
 	
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+	
+	@Autowired
+	private UserSecurityRepository userSecurityRepository;
 	
 	@Autowired
 	private GenderRepository genderRepository;
@@ -74,10 +84,42 @@ public class UserEndpoints {
 		return new CreateAccountDto();
 	}
 	
+	/**
+	 * This endpoint is response for accepting a CreateAccountDto and converting the 
+	 * data into a new account which is saved to the database.
+	 * @param createAccountDto
+	 * @return
+	 */
 	@PostMapping ( path = "/createAccount", headers = "Accept=application/json" )
-	public CreateAccountDto createAccount 
-		( @Valid @RequestBody CreateAccountDto createAccountDto ) {
-		return createAccountDto;
+	public ResponseEntity<String> createAccount 
+		( @Valid @RequestBody CreateAccountDto createAccountDto ) throws Exception {
+		
+		// Define Gender
+		Gender gender = genderRepository.findByName(createAccountDto.getGender());
+		Gender interestedIn = createAccountDto.getGender().equals("Men") ?
+				genderRepository.findByName("Woman") : genderRepository.findByName("Man");
+		
+		// Define User Profile
+		UserProfile userProfile = new UserProfile();
+		userProfile.setNewUser();
+		userProfile.setBirthday(new SimpleDateFormat("dd/MM/yyyy").parse(createAccountDto.getBirthday()));
+		userProfile.setDisplayName(createAccountDto.getDisplayName());
+		
+		// Define simple username + password security
+		UserSecurity userSecurity = new UserSecurity();
+		userSecurity.setUsername(createAccountDto.getUsername());
+		userSecurity.setPassword(createAccountDto.getPassword());
+				
+		// Create User and save
+		User newUser = new User();
+		newUser.setGender(gender);
+		newUser.setInterestedIn(interestedIn);
+		newUser.setProfile(userProfile);
+		newUser.setUserSecurity(userSecurity);
+		
+		userRepository.save(newUser);
+		
+		return new ResponseEntity<> ( "Success - Welcome!", HttpStatus.CREATED);
 	}
 	
 	/**

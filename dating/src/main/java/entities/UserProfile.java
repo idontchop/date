@@ -30,7 +30,7 @@ public class UserProfile implements Serializable {
 	@GeneratedValue
 	private long id;
 	
-	@Column ( length = 24 )
+	@Column ( length = 24, nullable = false )
 	private String displayName;
 	
 	/**
@@ -55,6 +55,14 @@ public class UserProfile implements Serializable {
 
 	public UserProfile() {
 		super();
+	}
+	
+	/**
+	 * Sets the notnull values to an empty string for new user creation
+	 */
+	public void setNewUser() {
+		aboutMe = "N/A";
+		lookingFor = "N/A";
 	}
 
 	public long getId() {

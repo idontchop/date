@@ -155,7 +155,7 @@ public class DatingApplication {
 	
 	@RequestMapping ("/")
 	public String helloWorld () {
-		return "Hello from future Dating App";
+		return "Hello from future Dating App on /";
 	}
 	
 	@RequestMapping ("/testApi")
