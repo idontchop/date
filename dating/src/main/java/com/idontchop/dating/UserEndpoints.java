@@ -3,6 +3,7 @@ package com.idontchop.dating;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dto.CreateAccountDto;
 import dto.UserProfileDto;
 import entities.Gender;
 import entities.User;
@@ -56,7 +58,7 @@ public class UserEndpoints {
 		if ( newGender == null ) return new RestMessage("Error in Gender");
 		getUser().setGender(newGender);
 		
-		// Extract Gender for interested In
+		// Extract Gender for interested In from DTO
 		newGender = genderRepository.findByName(userProfileDto.getInterestedIn());
 		if ( newGender == null ) return new RestMessage("Error in InterestedIn");
 		getUser().setInterestedIn(newGender);
@@ -65,6 +67,17 @@ public class UserEndpoints {
 		userRepository.save(getUser());	// save user
 		
 		return new RestMessage("ok");
+	}
+	
+	@GetMapping ("/createAccountForm")
+	public CreateAccountDto getCreateAccountForm () {
+		return new CreateAccountDto();
+	}
+	
+	@PostMapping ( path = "/createAccount", headers = "Accept=application/json" )
+	public CreateAccountDto createAccount 
+		( @Valid @RequestBody CreateAccountDto createAccountDto ) {
+		return createAccountDto;
 	}
 	
 	/**

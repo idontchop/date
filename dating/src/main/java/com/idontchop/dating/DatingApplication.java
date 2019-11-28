@@ -19,6 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -164,6 +168,19 @@ public class DatingApplication {
 		return principal;
 	}
 	
+
+	@RequestMapping ( "/findgender" )
+	public Page<User> findgender () {
+		return userRepository.findAllGender(genderRepository.findByName("Placeholder"), PageRequest.of ( 0, 10 ));
+	}
+	
+	@RequestMapping ( "/findInterestedIn" )
+	public Page<User> findInterestedIn() {
+		return userRepository.findByInterest(
+				genderRepository.findByName("Woman"),
+				genderRepository.findByName("Man"),
+				PageRequest.of ( 0, 10 ) );
+	}
 	/**
 	 * Rest endpoint: /mainSearch
 	 * 
@@ -199,7 +216,13 @@ public class DatingApplication {
 		}
 		int searchDistance = 80000;
 		if ( lat == 0 && lng == 0) searchDistance = 100000000;
-		return userRepository.findAllLocation(userLoc, searchDistance, p);
+		
+		// get the user's gender preferences
+		Gender gender = getUser().getGender();
+		Gender interestedIn = getUser().getInterestedIn();
+		
+		return userRepository.findAllLocation(
+				gender, interestedIn, userLoc, searchDistance, p);
 	}
 		
 	
@@ -209,4 +232,12 @@ public class DatingApplication {
 
 		return fRepository.findAll(); 
 	}
+	
+	/**
+	 * Helper function, returns the User entity of the currently logged in user
+	 */
+	private User getUser () {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();		
+		return ((CurrentUser) authentication.getPrincipal()).getUser();
+	}	
 }

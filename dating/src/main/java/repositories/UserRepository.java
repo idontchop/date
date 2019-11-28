@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.vividsolutions.jts.geom.Point;
 
+import entities.Gender;
 import entities.User;
 
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
@@ -25,7 +26,19 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	 * @param p
 	 * @return
 	 */
-	@Query ( value = "FROM User u where u in ( SELECT ul.user FROM UserLocation ul WHERE ST_Distance_Sphere( ul.point, :userLoc) < :distance ) ")
-	public Page<User> findAllLocation ( @Param("userLoc") Point userLoc, @Param("distance") int distance, Pageable p );
+	@Query ( value = "FROM User u where u.gender = :gender and "
+			+ "u.interestedIn = :interestedIn and "
+			+ "u in ( SELECT ul.user FROM UserLocation ul WHERE ST_Distance_Sphere( ul.point, :userLoc) < :distance ) ")
+	public Page<User> findAllLocation (
+			@Param("gender") Gender gender, @Param("interestedIn") Gender interestedIn,
+		 	@Param("userLoc") Point userLoc, @Param("distance") int distance, 
+			Pageable p );
 	
+	@Query ( value = "FROM User u where u.gender = :findGender")
+	public Page<User> findAllGender
+		( @Param("findGender") Gender findGender, Pageable p);
+	
+	@Query ( value = "FROM User u where u.gender = :gender and u.interestedIn = :interestedIn")
+	public Page<User> findByInterest
+		( Gender gender, Gender interestedIn, Pageable p );
 }
