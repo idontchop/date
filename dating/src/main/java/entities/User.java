@@ -89,6 +89,8 @@ public class User {
 	private Date lastLogin;
 	
 	public User () {
+		created = new Date();
+		lastLogin = new Date();
 		gender = Gender.getDefault();
 		interestedIn = Gender.getDefault();
 	}
