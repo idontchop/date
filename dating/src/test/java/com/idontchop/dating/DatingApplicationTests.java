@@ -301,7 +301,7 @@ public class DatingApplicationTests {
 		
 		Point p2 = UserLocation.pointFromCoords(-115.2557502, 36.185885299999995);
 		
-		Page<User> p = userRepository.findAllLocation(p2, 80000, PageRequest.of ( 0, 10 ) );
+		Page<User> p = userRepository.findAllLocation(null, null, p2, 80000, PageRequest.of ( 0, 10 ) );
 		//Page<User> p = userRepository.findAllCustom( PageRequest.of ( 0, 10 ));
 		
 		//assertTrue (p.size() > 0);
