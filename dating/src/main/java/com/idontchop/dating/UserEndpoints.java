@@ -90,7 +90,7 @@ public class UserEndpoints {
 	 * @param createAccountDto
 	 * @return
 	 */
-	@PostMapping ( path = "/createAccount", headers = "Accept=application/json" )
+	@PostMapping ( path = "/createAccountForm", headers = "Accept=application/json" )
 	public ResponseEntity<String> createAccount 
 		( @Valid @RequestBody CreateAccountDto createAccountDto ) throws Exception {
 		
