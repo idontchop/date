@@ -42,7 +42,8 @@ public class CreateAccountDto {
 	@NotNull
 	private String username;
 
-	@Size ( min = 8, max = 30 )
+	// TODO: 8 min
+	@Size ( min = 4, max = 30 )
 	@NotNull
 	private String password;
 	

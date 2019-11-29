@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import entities.Gender;
 import entities.UserProfile;
 
 /**
@@ -48,6 +49,28 @@ public class UserProfileDto {
 		userProfile = modelMapper.map ( this, UserProfile.class );
 		
 		return userProfile;
+	}
+	
+	/**
+	 * Sets the DTO data from the supplied userprofile
+	 * 
+	 * NOTE: Leaves gender, interestedIn as null, call
+	 * fromEntity ( UserProfile, Gender, Gender)
+	 * @param userProfile
+	 */
+	public void fromEntity ( UserProfile userProfile ) {
+		id = userProfile.getId();
+		displayName = userProfile.getDisplayName();
+		aboutMe = userProfile.getAboutMe();
+		lookingFor = userProfile.getLookingFor();
+		birthday = userProfile.getBirthday().toString();
+		
+	}
+	
+	public void fromEntity ( UserProfile userProfile, Gender gender, Gender interestedIn ) {
+		this.gender = gender.getName();
+		this.interestedIn = interestedIn.getName();
+		fromEntity(userProfile);
 	}
 	
 	/**

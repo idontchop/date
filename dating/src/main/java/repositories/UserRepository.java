@@ -1,5 +1,6 @@
 package repositories;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -41,4 +42,16 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	@Query ( value = "FROM User u where u.gender = :gender and u.interestedIn = :interestedIn")
 	public Page<User> findByInterest
 		( Gender gender, Gender interestedIn, Pageable p );
+	
+	@Query ( value = "FROM User u where "
+			+ "u.profile.age >= :minAge and "
+			+ "u.profile.age <= :maxAge")
+	public Page<User> findByAgeRange
+		( int minAge, int maxAge, Pageable p );
+	
+/*	@Query ( value = "SELECT u, TIMESTAMPDIFF(YEAR, u.profile.birthday, CURDATE()) as age FROM User u where "
+			+ " age >= :minAge and "
+			+ " age <= :maxAge")
+	public Page<User> findByAgeRange2
+		( int minAge, int maxAge, Pageable p );*/
 }

@@ -6,6 +6,8 @@ import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Formula;
+
 /**
  * 
  * Author: Nathaniel J Dunn
@@ -52,6 +54,11 @@ public class UserProfile implements Serializable {
 	 */
 	@NotNull
 	private Date birthday;
+	
+	// TODO: this works for development
+	// For production: https://stackoverflow.com/questions/26468245/sql-literal-in-jpa-hibernate-formula-using-timestampdiff
+	@Formula ( "DATEDIFF( CURDATE(), birthday) / 365 " )
+	private int age;
 
 	public UserProfile() {
 		super();
@@ -103,6 +110,14 @@ public class UserProfile implements Serializable {
 
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
 	}
 	
 	

@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Formula;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 
@@ -77,7 +78,6 @@ public class User {
 	@OneToMany ( mappedBy="user", fetch = FetchType.EAGER )
 	@OrderBy ( value = "priority" )
 	private List<Media> media;
-
 	
 	// TODO: Foreign keys
 	//long search_preference_Id;

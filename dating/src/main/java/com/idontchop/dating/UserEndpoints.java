@@ -53,8 +53,10 @@ public class UserEndpoints {
 	private GenderRepository genderRepository;
 	
 	@GetMapping("/MyProfile")
-	public UserProfile getUserProfile () {
-		return getUser().getProfile();
+	public UserProfileDto getUserProfile () {
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.fromEntity(getUser().getProfile(), getUser().getGender(), getUser().getInterestedIn());
+		return userProfileDto;
 	}
 	
 	@PostMapping(path = "/MyProfile", headers = "Accept=application/json" )
@@ -69,9 +71,9 @@ public class UserEndpoints {
 		getUser().setGender(newGender);
 		
 		// Extract Gender for interested In from DTO
-		newGender = genderRepository.findByName(userProfileDto.getInterestedIn());
-		if ( newGender == null ) return new RestMessage("Error in InterestedIn");
-		getUser().setInterestedIn(newGender);
+		Gender newInterestedIn = genderRepository.findByName(userProfileDto.getInterestedIn());
+		if ( newInterestedIn == null ) return new RestMessage("Error in InterestedIn");
+		getUser().setInterestedIn(newInterestedIn);
 		
 		// save User
 		userRepository.save(getUser());	// save user

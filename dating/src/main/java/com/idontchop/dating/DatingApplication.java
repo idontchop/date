@@ -155,7 +155,7 @@ public class DatingApplication {
 	
 	@RequestMapping ("/")
 	public String helloWorld () {
-		return "Hello from future Dating App on /";
+		return "Hello from future Dating App on /" + getUser().getProfile().getAge();
 	}
 	
 	@RequestMapping ("/testApi")
@@ -180,6 +180,12 @@ public class DatingApplication {
 				genderRepository.findByName("Woman"),
 				genderRepository.findByName("Man"),
 				PageRequest.of ( 0, 10 ) );
+	}
+	
+	@RequestMapping ( "/findByAge" )
+	public Page<User> findByAge () {
+		return userRepository.findByAgeRange(18, 38, PageRequest.of ( 0, 10 ));
+		
 	}
 	/**
 	 * Rest endpoint: /mainSearch
