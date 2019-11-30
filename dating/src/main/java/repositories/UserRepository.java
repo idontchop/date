@@ -20,19 +20,61 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	Page<User> findByGender_ActiveTrue( Pageable p );
 
 	
+
 	/**
-	 * Query for the main search by location and distance from.
+	 * TODO: hides and blocks search probably not efficient. Subquery best way?
+	 * @param currentUser
+	 * @param gender
+	 * @param interestedIn
+	 * @param minAge
+	 * @param maxAge
 	 * @param userLoc
 	 * @param distance
 	 * @param p
 	 * @return
 	 */
-	@Query ( value = "FROM User u where u.gender = :gender and "
+	@Query ( value = 
+			"FROM User u where u.gender = :gender and "
 			+ "u.interestedIn = :interestedIn and "
-			+ "u in ( SELECT ul.user FROM UserLocation ul WHERE ST_Distance_Sphere( ul.point, :userLoc) < :distance ) ")
+			// ^ Gender preferences set by user in profile
+			+ "u.profile.age >= :minAge and u.profile.age <= :maxAge and "
+			// ^ Age preferences set by user in search bar
+			+ "u in ( SELECT ul.user FROM UserLocation ul WHERE ST_Distance_Sphere( ul.point, :userLoc) < :distance ) and " 
+			// ^ Location preferences set by user in search bar
+			+ "u not in ( SELECT hides.to FROM Hides hides WHERE hides.from = :currentUser and hides.to = u and hides.active = true) and " 
+			// ^ Don't show hides in main search
+			+ "u not in ( SELECT blocks.to FROM Blocks blocks WHERE blocks.from = :currentUser and blocks.to = u and blocks.active = true) ")
 	public Page<User> findAllLocation (
-			@Param("gender") Gender gender, @Param("interestedIn") Gender interestedIn,
-		 	@Param("userLoc") Point userLoc, @Param("distance") int distance, 
+			@Param("currentUser") User currentUser,
+			@Param("gender") Gender gender, 
+			@Param("interestedIn") Gender interestedIn,			
+			@Param("minAge") int minAge, 
+			@Param("maxAge") int maxAge,
+		 	@Param("userLoc") Point userLoc, 
+		 	@Param("distance") int distance, 
+			Pageable p );
+	
+	/**
+	 * When the user wants to filter by his own likes
+	 * 
+	 * TODO: sort by like date?
+	 * 
+	 * @param currentUser
+	 * @param p
+	 * @return
+	 */
+	@Query ( value = 
+			"FROM User u WHERE "
+			+ "u in ( SELECT likes.to FROM Likes likes WHERE likes.from = :currentUser and likes.active = true )" )					
+	public Page<User> findAllLikes (
+			@Param("currentUser") User currentUser,
+			Pageable p );
+	
+	@Query ( value = 
+			"FROM User u WHERE "
+			+ "u in (SELECT favorites.to FROM Favorites favorites WHERE favorites.from = :currentUser and favorites.active = true )" )
+	public Page<User> findAllFavorites (
+			@Param("currentUser") User currentUser,
 			Pageable p );
 	
 	@Query ( value = "FROM User u where u.gender = :findGender")

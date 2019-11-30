@@ -66,6 +66,102 @@ public class DatingApplication {
 	private GenderRepository genderRepository;
 	
 	/**
+	 * 	
+	 * Rest endpoint: /mainSearch
+	 * 
+	 * See: UserRepository.java
+	 * 
+	 * This is the main search for the user. The frontend is envisioned as an instagram-style
+	 * endless scroll where listings are chosen based on search setting (location, gender, etc)
+	 * 
+	 * This endpoint should be kept as lean as possible. If the user wants to make more refined
+	 * searches such as on traits or only show liked users, a new search endpoint should be
+	 * used:  /refinedSearch
+	 * 
+	 * Parameters are supplied via Json.
+	 * 
+	 * @param minAge
+	 * @param maxAge
+	 * @param perPage technically not a profiles per page as that is determined by front end.
+	 * 		This Int determines how many to retrieve at a time.
+	 * @param page which page we are on, managed by frontend
+	 * @param lat latitude of search area, may be determined by user location or a city
+	 * @param lng longitude
+	 * 
+	 * @return Json with matching users
+	 */
+	@RequestMapping ("mainSearch")
+	public Page<User> mainSearch ( 
+			@RequestParam (defaultValue = "10") Integer perPage, 	// Number of profiles per page
+			@RequestParam (defaultValue = "0") Integer page,		// Current page number
+			@RequestParam (defaultValue = "18") Integer minAge,		// Can default ages
+			@RequestParam (defaultValue = "80") Integer maxAge,
+			@RequestParam (defaultValue = "0") Double lat,			//user supplied latitude
+			@RequestParam (defaultValue = "0") Double lng			// longitude
+			) {
+		
+		// Setup pagingandsorting repository
+		Pageable p = PageRequest.of ( page, perPage );
+		
+		// Get the user location using static method in UserLocation entity
+		Point userLoc;
+		try {
+			userLoc = UserLocation.pointFromCoords(lng, lat);
+		} catch (ParseException e) {
+			// Some how bad location data
+			return null;
+		}
+		
+		// search distance set arbitrarily for now
+		int searchDistance = 80000;
+		
+		// if user doesn't want to search by location
+		if ( lat == 0 && lng == 0) searchDistance = 100000000;
+		
+		// get the user's gender preferences
+		// Not set in a search form, set in the user's profile
+		Gender gender = getUser().getGender();
+		Gender interestedIn = getUser().getInterestedIn();
+		
+		return userRepository.findAllLocation( getUser(),
+				gender, interestedIn, minAge, maxAge, userLoc, searchDistance, p);
+	}
+		
+	/**
+	 * TODO: consolidate these endpoints into an Interactions DRY
+	 * 
+	 * @param perPage
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping ("showLikes")
+	public Page<User> showLikes (
+			@RequestParam (defaultValue = "10") Integer perPage, 	// Number of profiles per page
+			@RequestParam (defaultValue = "0") Integer page		// Current page number
+			) {
+		
+		// Setup pagingandsorting repository
+		Pageable p = PageRequest.of ( page, perPage );
+		
+		return userRepository.findAllLikes(getUser(), p);
+	}
+	
+	@RequestMapping ("showFavorites")
+	public Page<User> showFavorites (
+			@RequestParam (defaultValue = "10") Integer perPage,
+			@RequestParam (defaultValue = "0") Integer page
+			) {
+		
+		// Setup pagingandsorting repository
+		Pageable p = PageRequest.of ( page, perPage );
+		
+		return userRepository.findAllFavorites(getUser(), p);
+		
+	}
+	
+	/* End searches */
+	
+	/**
 	 * To handle Dto - Entity conversion
 	 * @return
 	 */
@@ -187,51 +283,7 @@ public class DatingApplication {
 		return userRepository.findByAgeRange(18, 38, PageRequest.of ( 0, 10 ));
 		
 	}
-	/**
-	 * Rest endpoint: /mainSearch
-	 * 
-	 * This is the main search for the user. The frontend is envisioned as an instagram-style
-	 * endless scroll where listings are chosen based on search setting (location, gender, etc)
-	 * 
-	 * Parameters are supplied via Json.
-	 * 
-	 * @param perPage technically not a profiles per page as that is determined by front end.
-	 * 		This Int determines how many to retrieve at a time.
-	 * @param page
-	 * @param lat latitude of search area, may be determined by user location or a city
-	 * @param lng longitude
-	 * 
-	 * @return Json with matching users
-	 */
-	@RequestMapping ("mainSearch")
-	public Page<User> mainSearch ( 
-			@RequestParam (defaultValue = "10") Integer perPage, // Number of profiles per page
-			@RequestParam (defaultValue = "0") Integer page,			// Current page number
-			@RequestParam (defaultValue = "0") Double lat,		//user supplied latitude
-			@RequestParam (defaultValue = "0") Double lng		// longitude
-			) {
-		
-		Pageable p = PageRequest.of ( page, perPage );
-		Point userLoc;
-		
-		try {
-			userLoc = UserLocation.pointFromCoords(lng, lat);
-		} catch (ParseException e) {
-			// Some how bad location data
-			return null;
-		}
-		int searchDistance = 80000;
-		if ( lat == 0 && lng == 0) searchDistance = 100000000;
-		
-		// get the user's gender preferences
-		Gender gender = getUser().getGender();
-		Gender interestedIn = getUser().getInterestedIn();
-		
-		return userRepository.findAllLocation(
-				gender, interestedIn, userLoc, searchDistance, p);
-	}
-		
-	
+
 	
 	@RequestMapping ("/allFavorites")
 	public Iterable<Favorites> allFavorites () {
