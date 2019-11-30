@@ -52,6 +52,10 @@ public class MediaEndpoints {
 		return "success";
 	}
 	
+	@GetMapping ("/MyImages")
+	public Iterable<Media> getMyImages () {
+		return mRepository.findByUser(getUser());
+	}
 	@GetMapping ("/image/{imageId}")
 	public ResponseEntity<Resource> downloadImage (@PathVariable Long imageId) {
 		Media m = mRepository.findById(imageId).get();
