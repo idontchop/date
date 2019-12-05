@@ -1,12 +1,15 @@
 package com.idontchop.dating;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,10 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import dto.MediaDto;
 import entities.Media;
 import entities.User;
 import repositories.MediaRepository;
@@ -56,6 +61,45 @@ public class MediaEndpoints {
 	public Iterable<Media> getMyImages () {
 		return mRepository.findByUser(getUser());
 	}
+	
+	/**
+	 * This accepts a new list from the client, to update values.
+	 * 
+	 * This won't check for a missing media for now TODO
+	 * @param newMedia
+	 * @return
+	 */
+	@PostMapping ( path = "/MyImages", headers = "Accept=application/json" )
+	public ResponseEntity<String> postMyImages ( @RequestBody ArrayList<MediaDto> newMediaDto ) {
+		
+	
+		// check that each media matches the user and then update
+		// only updatable attributes: priority, active
+		ArrayList<Media> updatedMedia = new ArrayList<>();
+		for ( MediaDto newMedia : newMediaDto)  {
+			Optional<Media> media = mRepository.findById(newMedia.getId());
+			if ( media.isPresent() ) {
+				
+				if ( media.get().getUser().getId() == getUser().getId() ) {
+					// correct user,  should be good, change the values and save to arraylist
+					media.get().setPriority(newMedia.getPriority());
+					media.get().setActive(newMedia.isActive());
+					updatedMedia.add(media.get());
+				} else {
+					return new ResponseEntity<>("Incorrect User", HttpStatus.BAD_REQUEST);
+				}
+				
+			} else {
+				return new ResponseEntity<>("Media not found: " + newMedia.getId(), HttpStatus.BAD_REQUEST);
+			}
+		};
+		
+		updatedMedia.forEach( (media) -> {
+			mRepository.save(media);
+		});
+		return new ResponseEntity<>("Success", HttpStatus.OK);
+	}
+	
 	@GetMapping ("/image/{imageId}")
 	public ResponseEntity<Resource> downloadImage (@PathVariable Long imageId) {
 		Media m = mRepository.findById(imageId).get();
