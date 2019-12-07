@@ -8,6 +8,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,10 +91,9 @@ public class DatingApplicationTests {
 	@Autowired
 	private InteractionsService iService;
 	
-	@Autowired
-	private TestRestTemplate testRestTemplate;
+	//@Autowired
+	//private TestRestTemplate testRestTemplate;
 	
-	@Test
 	public void getByFromTest () {
 		User user = userRepository.findById(42L).get();
 		List<Favorites> f = new ArrayList<>();
@@ -156,6 +160,17 @@ public class DatingApplicationTests {
 	}
 	
 
+	@Test
+	public void testAge () {
+		String birthday = "1990-01-21 00:00:00.0";
+		
+		YearMonth ym = YearMonth.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"));
+		LocalDate dt = ym.atDay(1);
+		
+		int age = Period.between(dt, LocalDate.now()).getYears();
+		
+		System.out.println("LocalDate: " + dt.toString() + " Age: " + age);
+	}
 	
 	
 	public void InteractionServiceTest () {

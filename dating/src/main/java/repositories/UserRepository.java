@@ -21,8 +21,12 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
 	
 
-	/**
+	/** Main Search. Find all matches by a location.
+	 * Location set by front end to lattitude and longitude.
+	 * 
 	 * TODO: hides and blocks search probably not efficient. Subquery best way?
+	 * TODO: Best way to hide blocks two-way (currently won't show if user has blocked, need vice versa)
+	 * 
 	 * @param currentUser
 	 * @param gender
 	 * @param interestedIn
@@ -34,8 +38,8 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 	 * @return
 	 */
 	@Query ( value = 
-			"FROM User u where u.gender = :gender and "
-			+ "u.interestedIn = :interestedIn and "
+			"FROM User u where u.gender = :interestedIn and "
+			+ "u.interestedIn = :gender and "
 			// ^ Gender preferences set by user in profile
 			+ "u.profile.age >= :minAge and u.profile.age <= :maxAge and "
 			// ^ Age preferences set by user in search bar
@@ -44,6 +48,7 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 			+ "u not in ( SELECT hides.to FROM Hides hides WHERE hides.from = :currentUser and hides.to = u and hides.active = true) and " 
 			// ^ Don't show hides in main search
 			+ "u not in ( SELECT blocks.to FROM Blocks blocks WHERE blocks.from = :currentUser and blocks.to = u and blocks.active = true) ")
+			// ^ Don't show blocks in main search
 	public Page<User> findAllLocation (
 			@Param("currentUser") User currentUser,
 			@Param("gender") Gender gender, 

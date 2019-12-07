@@ -1,8 +1,15 @@
 package dto;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,16 +28,27 @@ import entities.UserProfile;
  */
 public class UserProfileDto {
 
+	@JsonIgnore
+	@Transient
+	private final DateTimeFormatter DTFORMAT = 
+			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+	
 	// TODO: doesn't work, need Configuration class?
 	//@Autowired
 	private ModelMapper modelMapper;
 	
 	// Variables in UserProfile
+	
+	// should display main id, not userprofile key
 	private long id;
 	private String displayName;
 	private String aboutMe;
 	private String lookingFor;
-	private String birthday;
+	
+	// Birthday should never be transmitted
+	// age is set to the month not day
+	private int age;
+	
 	
 	// Extra Variables -- updated in User entity
 	private String gender;
@@ -63,7 +81,7 @@ public class UserProfileDto {
 		displayName = userProfile.getDisplayName();
 		aboutMe = userProfile.getAboutMe();
 		lookingFor = userProfile.getLookingFor();
-		birthday = userProfile.getBirthday().toString();
+		setAge(userProfile.getBirthday().toString());
 		
 	}
 	
@@ -122,12 +140,20 @@ public class UserProfileDto {
 		this.lookingFor = lookingFor;
 	}
 
+	/**
+	 * returns age
+	 * @return
+	 */
 	public String getBirthday() {
-		return birthday;
+		return String.valueOf(age);
 	}
 
+	/**
+	 * Will set age
+	 * @param birthday
+	 */
 	public void setBirthday(String birthday) {
-		this.birthday = birthday;
+		setAge(birthday);
 	}
 
 	public String getGender() {
@@ -146,6 +172,16 @@ public class UserProfileDto {
 		this.interestedIn = interestIn;
 	}
 	
+	public void setAge(int age) {
+		this.age = age;
+	}
 	
+	public void setAge(String birthday) {
+		
+		YearMonth ym = YearMonth.parse(birthday, DTFORMAT);
+		LocalDate dt = ym.atDay(1);
+		age = Period.between(dt, LocalDate.now()).getYears();
+		
+	}
 	
 }

@@ -101,7 +101,7 @@ public class DatingApplication {
 			) {
 		
 		// Setup pagingandsorting repository
-		Pageable p = PageRequest.of ( page, perPage );
+		Pageable springPage = PageRequest.of ( page, perPage );
 		
 		// Get the user location using static method in UserLocation entity
 		Point userLoc;
@@ -124,7 +124,8 @@ public class DatingApplication {
 		Gender interestedIn = getUser().getInterestedIn();
 		
 		return userRepository.findAllLocation( getUser(),
-				gender, interestedIn, minAge, maxAge, userLoc, searchDistance, p);
+				gender, interestedIn, minAge, maxAge, userLoc, searchDistance, springPage);
+		// TODO: To convert to userprofile dto, something like map u -> new userprofiledto.fromentity(u.profile)
 	}
 		
 	/**

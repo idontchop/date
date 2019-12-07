@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,13 +49,26 @@ public class MediaEndpoints {
 	private MediaRepository mRepository;
 	
 	@PostMapping ("/uploadImage")
-	public String uploadImage ( @RequestParam("file") MultipartFile file ) {
+	public String uploadImage ( @RequestParam("file") MultipartFile file,
+								@RequestParam( value = "priority",
+											defaultValue = "0",
+											required = false) int priority) {
 		try {
-			mService.storeDefaultImage(file, getUser() );
+			mService.storeProfileImage(file, priority, getUser() );
 		} catch (IOException e) {
 			return "Error: " + e.getMessage();
 		}
 		return "success";
+	}
+	
+	@DeleteMapping ( "/deleteImage" )
+	public ResponseEntity<String> deleteImage ( @RequestParam ("id") long id ) {
+		if (mService.deleteProfileImage(id, getUser())) {
+			// deleted success
+			return new ResponseEntity<>("Success",HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Not Found", HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@GetMapping ("/MyImages")
