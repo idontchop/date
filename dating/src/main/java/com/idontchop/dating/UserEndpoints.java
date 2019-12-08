@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dto.CreateAccountDto;
+import dto.UserDto;
 import dto.UserProfileDto;
 import entities.Gender;
 import entities.InteractionsId;
@@ -77,6 +78,8 @@ public class UserEndpoints {
 		
 		HttpHeaders responseHeaders = new HttpHeaders(); // For use in setting  message
 		
+		// TODO: break the logic for finding a user and checking blocks into a service
+		
 		User viewUser;
 		try {
 			viewUser = userRepository.findById(id).get();
@@ -122,6 +125,20 @@ public class UserEndpoints {
 			.headers(responseHeaders)
 			.body(viewUserProfileDto);
 		//return new ResponseEntity<>(viewUserProfileDto, HttpStatus.OK);
+	}
+	
+	@GetMapping ("/ViewUser" )
+	public ResponseEntity<UserDto> viewUser ( @RequestParam ("id") long id ) {
+		// TODO: will need block checking logic once finished
+		
+		User user = userRepository.findById(id).get();
+		
+		UserDto userDto = new UserDto();
+		userDto.fromEntity(user);
+		
+		return ResponseEntity.ok()
+				.body(userDto);
+		
 	}
 	
 	@GetMapping("/MyProfile")

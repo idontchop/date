@@ -131,7 +131,6 @@ public class DatingApplication {
 							userDto.fromEntity(user);
 							return userDto;
 						});
-		// TODO: To convert to userprofile dto, something like map u -> new userprofiledto.fromentity(u.profile)
 	}
 		
 	/**
