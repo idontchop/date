@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 
+import dto.UserDto;
 import entities.Favorites;
 import entities.Gender;
 import entities.User;
@@ -91,7 +92,7 @@ public class DatingApplication {
 	 * @return Json with matching users
 	 */
 	@RequestMapping ("mainSearch")
-	public Page<User> mainSearch ( 
+	public Page<UserDto> mainSearch ( 
 			@RequestParam (defaultValue = "10") Integer perPage, 	// Number of profiles per page
 			@RequestParam (defaultValue = "0") Integer page,		// Current page number
 			@RequestParam (defaultValue = "18") Integer minAge,		// Can default ages
@@ -124,7 +125,12 @@ public class DatingApplication {
 		Gender interestedIn = getUser().getInterestedIn();
 		
 		return userRepository.findAllLocation( getUser(),
-				gender, interestedIn, minAge, maxAge, userLoc, searchDistance, springPage);
+				gender, interestedIn, minAge, maxAge, userLoc, searchDistance, springPage).map( 
+						user -> {
+							UserDto userDto = new UserDto();
+							userDto.fromEntity(user);
+							return userDto;
+						});
 		// TODO: To convert to userprofile dto, something like map u -> new userprofiledto.fromentity(u.profile)
 	}
 		

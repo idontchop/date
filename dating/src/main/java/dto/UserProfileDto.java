@@ -184,4 +184,8 @@ public class UserProfileDto {
 		
 	}
 	
+	public int getAge() {
+		return age;
+	}
+	
 }
