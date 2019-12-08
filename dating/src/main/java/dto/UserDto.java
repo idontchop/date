@@ -8,6 +8,12 @@ import entities.Media;
 import entities.User;
 import entities.UserProfile;
 
+/**
+ * User DTO for use on main search and viewing another's profile
+ * 
+ * @author Nathaniel J Dunn <idontchop.com>
+ *
+ */
 public class UserDto {
 
 	private long id;
