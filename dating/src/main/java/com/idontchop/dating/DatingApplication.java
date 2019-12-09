@@ -35,6 +35,7 @@ import com.vividsolutions.jts.io.ParseException;
 import dto.UserDto;
 import entities.Favorites;
 import entities.Gender;
+import entities.Hides;
 import entities.User;
 import entities.UserLocation;
 import entities.UserProfile;
@@ -42,6 +43,7 @@ import entities.UserSecurity;
 import repositories.UserRepository;
 import repositories.FavoritesRepository;
 import repositories.GenderRepository;
+import repositories.HidesRepository;
 
 /**
  * This is going to be a big project but keep reading and we will get there.
@@ -65,6 +67,9 @@ public class DatingApplication {
 	
 	@Autowired
 	private FavoritesRepository fRepository;
+	
+	@Autowired
+	private HidesRepository hRepository;
 	
 	@Autowired
 	private GenderRepository genderRepository;
@@ -188,36 +193,40 @@ public class DatingApplication {
 		return args -> {
 			
 			
-			/* User and Profile 
-			  
+			/* User and Profile  */
+			  /*
 			String[][]  strings = new String[][] {
 				{
-					"profile for Carter", // profile.aboutme
+					"profile for Ben", // profile.aboutme
 					"I'm looking lady2", //profile.lookingfor
-					"Carter", //profile.displayname
-					"carter", //security.username
+					"Ben", //profile.displayname
+					"bencarter", //security.username
 					"1234", // security.password
+					"1"		// gender
 				},
 				{
 					"Melani the bloodsucker",
 					"Looking lady that is beautiful2",
 					"Melani",
 					"melani",
-					"1234"
+					"1234",
+					"2"
 				},
 				{
 					"Helen the crazy cutie",
 					"Looking tall dark and handsome2",
 					"Helen",
 					"helen",
-					"1234"
+					"1234",
+					"2"
 				},
 				{
 					"Beautiful lady2",
 					"I want a rich man2",
 					"Lumi",
 					"lady12",
-					"1234"
+					"1234",
+					"2"
 				}
 			};
 			for ( int i = 0; i < strings.length; i++) {
@@ -244,23 +253,43 @@ public class DatingApplication {
 			
 			// gender
 			Gender defaultGender = genderRepository.findById(-1L).orElse(Gender.getDefault());
+			/*Gender man = genderRepository.findById(1L).orElse(Gender.getDefault());
+			Gender woman = genderRepository.findById(2L).orElse(Gender.getDefault());
+			if ( strings[3][4].equals("1")) {
+				u.setGender(man);
+				u.setInterestedIn(woman);
+			} else {
+				u.setGender(woman);
+				u.setInterestedIn(man);
+			}
+			
+			
 			u.setGender(defaultGender);
 			u.setInterestedIn(defaultGender);
 			
 			userRepository.save(u);
 			}*/
+				
+			// test persist
+			
+			Hides hide = new Hides();
+			
+			User from = userRepository.findById(7L).get();
+			User to = userRepository.findById(10L).get();
+			hide.setFrom(from);
+			hide.setTo(to);
+			hide.setActive(true);
+			
+			hRepository.save(hide);
 			
 			// end add user CL
-			 
-			User u = userRepository.findById(60L).orElse(new User());
-			userRepository.delete(u);
-
 		};
 	}
 	
 	@RequestMapping ("/")
 	public String helloWorld () {
 		return "Hello from future Dating App on /" + getUser().getProfile().getAge();
+		
 	}
 	
 	@RequestMapping ("/testApi")

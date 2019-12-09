@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Formula;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.stereotype.Service;
 
 
 /**
@@ -36,7 +37,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
  *
  */
 @Entity
-
 public class User {
 	
 	@Id
@@ -79,6 +79,7 @@ public class User {
 	@OrderBy ( value = "priority" )
 	private List<Media> media;
 	
+	
 	// TODO: Foreign keys
 	//long search_preference_Id;
 	
@@ -87,6 +88,7 @@ public class User {
 	
 	// last user log in
 	private Date lastLogin;
+	
 	
 	public User () {
 		created = new Date();
