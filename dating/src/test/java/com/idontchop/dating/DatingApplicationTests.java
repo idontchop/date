@@ -282,6 +282,13 @@ public class DatingApplicationTests {
 		return from;
 	}
 	
+	/**
+	 * Checks every user that they have a userlocation
+	 * 
+	 * This test should be removed once location functionality completed
+	 * @throws ParseException
+	 */
+	@Test
 	public void LocationEntityTest () throws ParseException  {
 		String slocVegas = "POINT(-115.172813 36.114647)";
 		String slocLA = "POINT(-118.243683 34.052235)";
@@ -292,12 +299,22 @@ public class DatingApplicationTests {
 		
 		Point point = (Point) wr.read(slocVegas);
 		
-		UserLocation ul = new UserLocation();
-		ul.setPoint(point);
+
 		
-		User user = userRepository.findById(42L).orElse(new User());
-		ul.setUser(user);
-		//userLocationRepository.save(ul);
+		userRepository.findAll().forEach( user -> {
+			
+			if ( !userLocationRepository.findByUser(user).isPresent() ) {
+				UserLocation ul = new UserLocation();
+				ul.setPoint(point);
+				ul.setUser(user);
+				ul.setPlotted(false);
+				userLocationRepository.save(ul);
+				logger.info("added " + user.getProfile().getDisplayName() + " location.");
+			}
+			
+		});
+		
+
 		assertTrue ( userLocationRepository.findAllWithin(point).size() > 0);
 		
 		

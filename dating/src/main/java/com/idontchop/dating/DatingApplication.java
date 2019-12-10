@@ -271,7 +271,7 @@ public class DatingApplication {
 			}*/
 				
 			// test persist
-			
+			/*
 			Hides hide = new Hides();
 			
 			User from = userRepository.findById(7L).get();
@@ -280,7 +280,7 @@ public class DatingApplication {
 			hide.setTo(to);
 			hide.setActive(true);
 			
-			hRepository.save(hide);
+			hRepository.save(hide);*/
 			
 			// end add user CL
 		};

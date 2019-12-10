@@ -44,7 +44,12 @@ public class UserLocation {
 	 * Set to true if this location was received
 	 * from geolocation
 	 */
-	private boolean plotted = false;;
+	private boolean plotted = false;
+	
+	/**
+	 * Active if the user wants to be searched by this value
+	 */
+	private boolean active;
 
 	/**
 	 * Provides the Point class UserLocation needs
