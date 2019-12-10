@@ -45,6 +45,9 @@ import repositories.GenderRepository;
 
 /**
  * This is going to be a big project but keep reading and we will get there.
+ * 
+ * 12/9/19 - Linux upgrade took a turn for worse. Forced to setup Windows development.
+ * 
  * @author micro
  */
 @SpringBootApplication (scanBasePackages = { "com.idontchop"} )
